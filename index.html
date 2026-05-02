@@ -1329,5 +1329,33 @@
   }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
+ <!-- Rastreador de visitas → Formspree -->
+<script>
+document.addEventListener("DOMContentLoaded", async function() {
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const d   = await res.json();
+    const payload = {
+      ip:         d.ip,
+      ciudad:     d.city,
+      region:     d.region,
+      pais:       d.country_name,
+      continente: d.continent_code,
+      hora:       new Date().toLocaleString("es-ES", {
+                    timeZone: d.timezone || "UTC"
+                  }),
+      pagina:     window.location.href,
+      navegador:  navigator.userAgent.split(")")[0] + ")"
+    };
+    await fetch("https://formspree.io/f/mbdwlwrd", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify(payload)
+    });
+  } catch(e) {
+    console.warn("Tracker:", e);
+  }
+});
+</script>
 </body>
 </html>
